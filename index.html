@@ -24,7 +24,7 @@
       position: relative;
     }
 
-    /* Image de fond animée */
+    /* Image de fond animée (Affiche Stallone) */
     .hero-bg {
       position: fixed;
       top: 0;
@@ -118,7 +118,6 @@
       padding: 20px;
       display: flex;
       flex-direction: column;
-      
       opacity: 0;
       animation: fadeInContent 1s ease-out 4.2s forwards;
     }
@@ -144,7 +143,7 @@
       letter-spacing: 1px;
     }
 
-    /* Layout 3 colonnes virtuels */
+    /* Layout */
     .main-layout {
       display: grid;
       grid-template-columns: 1fr;
@@ -155,8 +154,14 @@
     @media (min-width: 1025px) {
       .main-layout {
         margin-left: 30vw;
-        grid-template-columns: 340px 1fr;
+        grid-template-columns: 360px 1fr;
       }
+    }
+
+    .left-column {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
     }
 
     .card { 
@@ -186,8 +191,51 @@
     input, select { width: 100%; padding: 9px; border-radius: 6px; border: 1px solid var(--border); background-color: rgba(5, 8, 17, 0.9); color: var(--text); font-size: 0.95rem; }
     input:focus, select:focus { outline: 2px solid var(--accent); }
 
-    button { width: 100%; padding: 12px; border: none; border-radius: 6px; background-color: var(--accent); color: #000; font-weight: bold; font-size: 1rem; cursor: pointer; transition: opacity 0.2s; margin-top: 5px; }
-    button:hover { opacity: 0.9; }
+    .btn-submit { 
+      width: 100%; 
+      padding: 12px; 
+      border: none; 
+      border-radius: 6px; 
+      background-color: var(--accent); 
+      color: #000; 
+      font-weight: bold; 
+      font-size: 1rem; 
+      cursor: pointer; 
+      transition: opacity 0.2s; 
+      margin-top: 5px; 
+    }
+    .btn-submit:hover { opacity: 0.9; }
+
+    .reset-btn { 
+      width: 100%; 
+      background: #dc2626; 
+      color: white; 
+      border: none; 
+      border-radius: 6px; 
+      margin-top: 10px; 
+      font-size: 0.8rem; 
+      padding: 8px; 
+      cursor: pointer; 
+    }
+
+    /* Bouton Export CSV réintégré sous le formulaire */
+    .export-btn {
+      width: 100%;
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px dashed var(--border);
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: all 0.2s ease;
+    }
+    .export-btn:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+      border-color: var(--text-muted);
+    }
 
     .controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; gap: 10px; flex-wrap: wrap; }
     .filter-btn { background: rgba(5, 8, 17, 0.8); color: var(--text); border: 1px solid var(--border); padding: 5px 12px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; }
@@ -205,12 +253,14 @@
     
     .score-val { font-weight: bold; color: var(--accent); }
     .ratio-val { font-weight: bold; color: #38bdf8; }
-    .badge { padding: 2px 6px; border-radius: 10px; font-size: 0.7rem; font-weight: bold; }
+    .badge { padding: 2px 6px; border-radius: 10px; font-size: 0.7rem; font-weight: bold; display: inline-block; margin-right: 2px; }
     .badge-H { background: #1e3a8a; color: #93c5fd; }
     .badge-F { background: #831843; color: #fbcfe8; }
+    
+    .badge-hulk { background: #15803d; color: #bbf7d0; border: 1px solid #22c55e; }
+    .badge-bruce { background: #b45309; color: #fef08a; border: 1px solid #eab308; }
 
     .btn-delete { background: none; border: none; color: #ef4444; cursor: pointer; font-size: 1rem; width: auto; padding: 0; }
-    .reset-btn { background: #dc2626; color: white; margin-top: 15px; font-size: 0.8rem; padding: 8px; }
   </style>
 </head>
 <body>
@@ -234,46 +284,72 @@
 
     <div class="main-layout">
       
-      <!-- CENTRE : Formulaire d'ajout -->
-      <div class="card">
-        <h2>Saisir un score</h2>
-        <form id="score-form">
-          <div class="form-group">
-            <label for="name">Nom / Pseudo</label>
-            <input type="text" id="name" required placeholder="Ex: Marc">
-          </div>
+      <!-- COLONNE CENTRALE : Formulaire + Statistiques par Service -->
+      <div class="left-column">
+        
+        <!-- Saisir un score -->
+        <div class="card">
+          <h2>Saisir un score</h2>
+          <form id="score-form">
+            <div class="form-group">
+              <label for="name">Nom / Pseudo</label>
+              <input type="text" id="name" required placeholder="Ex: Marc">
+            </div>
 
-          <div class="form-row">
-            <div class="form-group">
-              <label for="category">Catégorie</label>
-              <select id="category">
-                <option value="H">Homme</option>
-                <option value="F">Femme</option>
-              </select>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="category">Catégorie</label>
+                <select id="category">
+                  <option value="H">Homme</option>
+                  <option value="F">Femme</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="service">Service</label>
+                <input type="text" id="service" required placeholder="Ex: Ventes">
+              </div>
             </div>
-            <div class="form-group">
-              <label for="service">Service</label>
-              <input type="text" id="service" required placeholder="Ex: Ventes">
-            </div>
-          </div>
 
-          <div class="form-row">
-            <div class="form-group">
-              <label for="weight">Poids (kg)</label>
-              <input type="number" id="weight" step="0.1" min="30" max="250" required placeholder="Ex: 75">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="weight">Poids (kg)</label>
+                <input type="number" id="weight" step="0.1" min="30" max="250" required placeholder="Ex: 75">
+              </div>
+              <div class="form-group">
+                <label for="score">Grip (kg)</label>
+                <input type="number" id="score" step="0.1" min="0" max="200" required placeholder="Ex: 58.5">
+              </div>
             </div>
-            <div class="form-group">
-              <label for="score">Grip (kg)</label>
-              <input type="number" id="score" step="0.1" min="0" max="200" required placeholder="Ex: 58.5">
-            </div>
-          </div>
 
-          <button type="submit">Ajouter au classement</button>
-        </form>
-        <button class="reset-btn" id="reset-btn">Réinitialiser tout le concours</button>
+            <button type="submit" class="btn-submit">Ajouter au classement</button>
+          </form>
+          
+          <button class="reset-btn" id="reset-btn">Réinitialiser tout le concours</button>
+          <button class="export-btn" id="export-csv-btn">📥 Exporter la liste (CSV)</button>
+        </div>
+
+        <!-- Classement & Moyenne par Service -->
+        <div class="card">
+          <h2>Moyenne par Service 🏢</h2>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Service</th>
+                  <th>Moy. Grip</th>
+                  <th>Part. (H/F)</th>
+                </tr>
+              </thead>
+              <tbody id="service-stats-body">
+                <!-- Inséré dynamiquement -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
       </div>
 
-      <!-- DROITE : Classement -->
+      <!-- DROITE : Classement Général -->
       <div class="card card-leaderboard">
         <div class="controls">
           <h2>Classement</h2>
@@ -294,7 +370,8 @@
                 <th>Cat.</th>
                 <th>Poids</th>
                 <th>Grip</th>
-                <th>Ratio (Grip/Poids)</th>
+                <th>Ratio</th>
+                <th>Badges</th>
                 <th></th>
               </tr>
             </thead>
@@ -314,8 +391,10 @@
 
     const form = document.getElementById('score-form');
     const leaderboardBody = document.getElementById('leaderboard-body');
+    const serviceStatsBody = document.getElementById('service-stats-body');
     const filterBtns = document.querySelectorAll('.filter-btn');
     const resetBtn = document.getElementById('reset-btn');
+    const exportCsvBtn = document.getElementById('export-csv-btn');
     const gifOverlay = document.getElementById('gif-overlay');
     const celebrationGif = document.getElementById('celebration-gif');
 
@@ -325,38 +404,106 @@
 
     function renderLeaderboard() {
       leaderboardBody.innerHTML = '';
-      let filtered = participants.filter(p => currentFilter === 'ALL' || p.category === currentFilter);
       
+      let maxScore = -1;
+      let hulkId = null;
+      let maxRatio = -1;
+      let bruceLeeId = null;
+
+      participants.forEach(p => {
+        const ratio = (p.weight && p.weight > 0) ? (p.score / p.weight) : 0;
+        if (p.score > maxScore) {
+          maxScore = p.score;
+          hulkId = p.id;
+        }
+        if (ratio > maxRatio) {
+          maxRatio = ratio;
+          bruceLeeId = p.id;
+        }
+      });
+
+      let filtered = participants.filter(p => currentFilter === 'ALL' || p.category === currentFilter);
       filtered.sort((a, b) => b.score - a.score);
 
       if (filtered.length === 0) {
-        leaderboardBody.innerHTML = `<tr><td colspan="8" style="text-align:center; color: var(--text-muted); padding: 30px;">Aucun participant pour le moment.</td></tr>`;
+        leaderboardBody.innerHTML = `<tr><td colspan="9" style="text-align:center; color: var(--text-muted); padding: 30px;">Aucun participant pour le moment.</td></tr>`;
+      } else {
+        filtered.forEach((p, index) => {
+          const rank = index + 1;
+          let rankClass = '';
+          let rankSymbol = rank;
+
+          if (rank === 1) { rankClass = 'rank-1'; rankSymbol = '🥇'; }
+          else if (rank === 2) { rankClass = 'rank-2'; rankSymbol = '🥈'; }
+          else if (rank === 3) { rankClass = 'rank-3'; rankSymbol = '🥉'; }
+
+          const ratio = (p.weight && p.weight > 0) ? (p.score / p.weight).toFixed(2) : '-';
+
+          let badgeHtml = '';
+          if (p.id === hulkId && maxScore > 0) {
+            badgeHtml += `<span class="badge badge-hulk" title="Plus gros score absolu">🟢 Hulk</span>`;
+          }
+          if (p.id === bruceLeeId && maxRatio > 0) {
+            badgeHtml += `<span class="badge badge-bruce" title="Meilleur ratio Poids/Puissance">🟡 Bruce Lee</span>`;
+          }
+
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td class="rank ${rankClass}">${rankSymbol}</td>
+            <td><strong>${escapeHtml(p.name)}</strong></td>
+            <td>${escapeHtml(p.service || '-')}</td>
+            <td><span class="badge badge-${p.category}">${p.category === 'H' ? 'H' : 'F'}</span></td>
+            <td>${p.weight ? p.weight.toFixed(1) + ' kg' : '-'}</td>
+            <td class="score-val">${p.score.toFixed(1)} kg</td>
+            <td class="ratio-val">${ratio !== '-' ? ratio + ' x' : '-'}</td>
+            <td>${badgeHtml || '-'}</td>
+            <td><button class="btn-delete" onclick="deleteParticipant('${p.id}')" title="Supprimer">✕</button></td>
+          `;
+          leaderboardBody.appendChild(tr);
+        });
+      }
+
+      renderServiceStats();
+    }
+
+    function renderServiceStats() {
+      serviceStatsBody.innerHTML = '';
+      if (participants.length === 0) {
+        serviceStatsBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color: var(--text-muted); padding: 15px;">Pas encore de données.</td></tr>`;
         return;
       }
 
-      filtered.forEach((p, index) => {
-        const rank = index + 1;
-        let rankClass = '';
-        let rankSymbol = rank;
+      const services = {};
 
-        if (rank === 1) { rankClass = 'rank-1'; rankSymbol = '🥇'; }
-        else if (rank === 2) { rankClass = 'rank-2'; rankSymbol = '🥈'; }
-        else if (rank === 3) { rankClass = 'rank-3'; rankSymbol = '🥉'; }
+      participants.forEach(p => {
+        const sName = p.service ? p.service.trim().toUpperCase() : 'AUTRE';
+        if (!services[sName]) {
+          services[sName] = { totalScore: 0, count: 0, hommes: 0, femmes: 0 };
+        }
+        services[sName].totalScore += p.score;
+        services[sName].count += 1;
+        if (p.category === 'H') services[sName].hommes += 1;
+        if (p.category === 'F') services[sName].femmes += 1;
+      });
 
-        const ratio = (p.weight && p.weight > 0) ? (p.score / p.weight).toFixed(2) : '-';
+      const statsArray = Object.keys(services).map(name => ({
+        name,
+        avg: services[name].totalScore / services[name].count,
+        count: services[name].count,
+        h: services[name].hommes,
+        f: services[name].femmes
+      }));
 
+      statsArray.sort((a, b) => b.avg - a.avg);
+
+      statsArray.forEach(s => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td class="rank ${rankClass}">${rankSymbol}</td>
-          <td><strong>${escapeHtml(p.name)}</strong></td>
-          <td>${escapeHtml(p.service || '-')}</td>
-          <td><span class="badge badge-${p.category}">${p.category === 'H' ? 'H' : 'F'}</span></td>
-          <td>${p.weight ? p.weight.toFixed(1) + ' kg' : '-'}</td>
-          <td class="score-val">${p.score.toFixed(1)} kg</td>
-          <td class="ratio-val">${ratio !== '-' ? ratio + ' x' : '-'}</td>
-          <td><button class="btn-delete" onclick="deleteParticipant('${p.id}')" title="Supprimer">✕</button></td>
+          <td><strong>${escapeHtml(s.name)}</strong></td>
+          <td class="score-val">${s.avg.toFixed(1)} kg</td>
+          <td>${s.count} <span style="color:var(--text-muted); font-size:0.8rem;">(${s.h}H / ${s.f}F)</span></td>
         `;
-        leaderboardBody.appendChild(tr);
+        serviceStatsBody.appendChild(tr);
       });
     }
 
@@ -427,6 +574,28 @@
         saveData();
         renderLeaderboard();
       }
+    });
+
+    exportCsvBtn.addEventListener('click', () => {
+      if (participants.length === 0) {
+        alert('Aucune donnée à exporter.');
+        return;
+      }
+
+      let csvContent = "data:text/csv;charset=utf-8,Nom,Service,Categorie,Poids (kg),Grip (kg),Ratio (Grip/Poids)\n";
+
+      participants.forEach(p => {
+        const ratio = (p.weight && p.weight > 0) ? (p.score / p.weight).toFixed(2) : '0';
+        csvContent += `"${p.name}","${p.service || ''}","${p.category}",${p.weight},${p.score},${ratio}\n`;
+      });
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `C2i_Grip_Challenge_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     });
 
     renderLeaderboard();
