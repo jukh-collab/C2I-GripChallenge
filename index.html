@@ -132,13 +132,17 @@
       text-align: center; 
       margin-bottom: 20px; 
       background: rgba(5, 8, 17, 0.8);
-      padding: 12px 20px;
+      padding: 16px 20px;
       border-radius: 12px;
       backdrop-filter: blur(8px);
       border: 1px solid var(--border);
     }
-    header h1 { font-size: 2rem; color: var(--accent); text-shadow: 0 2px 6px rgba(0,0,0,0.9); }
-    header p { color: var(--text-muted); font-size: 0.95rem; }
+    header h1 { 
+      font-size: 2.4rem; 
+      color: var(--accent); 
+      text-shadow: 0 2px 8px rgba(0,0,0,0.9);
+      letter-spacing: 1px;
+    }
 
     /* Layout 3 colonnes virtuels */
     .main-layout {
@@ -225,8 +229,7 @@
   <!-- Application Web -->
   <div class="app-container">
     <header>
-      <h1>✊ C2I GRIP CHALLENGE</h1>
-      <p>Concours de Force de Préhension</p>
+      <h1>C2i Grip Challenge</h1>
     </header>
 
     <div class="main-layout">
@@ -363,16 +366,13 @@
       return div.innerHTML;
     }
 
-    // Afficher le GIF animé
     function triggerGifAnimation() {
-      // Astuce pour rejouer le GIF depuis le début à chaque fois
       const originalSrc = celebrationGif.src;
       celebrationGif.src = '';
       celebrationGif.src = originalSrc;
 
       gifOverlay.classList.add('active');
       
-      // Masquer après 2.8 secondes (durée de l'animation de poignée de main)
       setTimeout(() => {
         gifOverlay.classList.remove('active');
       }, 2800);
