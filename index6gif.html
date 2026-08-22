@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C21 Grip Strength Challenge</title>
+  <style>
+    :root {
+      --bg-color: #050811;
+      --card-bg: rgba(15, 23, 42, 0.88);
+      --accent: #f59e0b;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: rgba(255, 255, 255, 0.15);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Image de fond animée */
+    .hero-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-image: url('C2Igripstrength.png');
+      background-repeat: no-repeat;
+      z-index: 1;
+      animation: introPoster 1.2s cubic-bezier(0.25, 1, 0.5, 1) 4s forwards;
+      background-size: contain;
+      background-position: center center;
+    }
+
+    @keyframes introPoster {
+      0% {
+        width: 100vw;
+        left: 0;
+        background-position: center center;
+      }
+      100% {
+        width: 30vw;
+        left: 0;
+        background-position: center center;
+      }
+    }
+
+    @media (max-width: 1024px) {
+      @keyframes introPoster {
+        0% { width: 100vw; left: 0; opacity: 1; }
+        100% { width: 100vw; left: 0; opacity: 0.12; }
+      }
+    }
+
+    /* Overlay pour le GIF Predator */
+    #gif-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(5, 8, 17, 0.88);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      backdrop-filter: blur(8px);
+    }
+
+    #gif-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    #gif-overlay .gif-box {
+      text-align: center;
+      animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    #gif-overlay img {
+      max-width: 480px;
+      width: 90vw;
+      border-radius: 12px;
+      box-shadow: 0 0 35px rgba(245, 158, 11, 0.5);
+      border: 3px solid var(--accent);
+    }
+
+    #gif-overlay h3 {
+      margin-top: 15px;
+      font-size: 2rem;
+      color: var(--accent);
+      text-shadow: 0 2px 10px rgba(0,0,0,0.9);
+      letter-spacing: 1px;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.6); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* Conteneur principal */
+    .app-container {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      
+      opacity: 0;
+      animation: fadeInContent 1s ease-out 4.2s forwards;
+    }
+
+    @keyframes fadeInContent {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    header { 
+      text-align: center; 
+      margin-bottom: 20px; 
+      background: rgba(5, 8, 17, 0.8);
+      padding: 12px 20px;
+      border-radius: 12px;
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
+    }
+    header h1 { font-size: 2rem; color: var(--accent); text-shadow: 0 2px 6px rgba(0,0,0,0.9); }
+    header p { color: var(--text-muted); font-size: 0.95rem; }
+
+    /* Layout 3 colonnes virtuels */
+    .main-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    @media (min-width: 1025px) {
+      .main-layout {
+        margin-left: 30vw;
+        grid-template-columns: 340px 1fr;
+      }
+    }
+
+    .card { 
+      background-color: var(--card-bg); 
+      backdrop-filter: blur(12px); 
+      border-radius: 12px; 
+      padding: 20px; 
+      border: 1px solid var(--border); 
+      box-shadow: 0 8px 24px rgba(0,0,0,0.8); 
+    }
+    .card h2 { font-size: 1.2rem; margin-bottom: 15px; border-bottom: 2px solid var(--border); padding-bottom: 8px; }
+
+    .card-leaderboard {
+      min-height: calc(100vh - 140px);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .form-group { margin-bottom: 12px; }
+    label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px; }
+    input, select { width: 100%; padding: 9px; border-radius: 6px; border: 1px solid var(--border); background-color: rgba(5, 8, 17, 0.9); color: var(--text); font-size: 0.95rem; }
+    input:focus, select:focus { outline: 2px solid var(--accent); }
+
+    button { width: 100%; padding: 12px; border: none; border-radius: 6px; background-color: var(--accent); color: #000; font-weight: bold; font-size: 1rem; cursor: pointer; transition: opacity 0.2s; margin-top: 5px; }
+    button:hover { opacity: 0.9; }
+
+    .controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; gap: 10px; flex-wrap: wrap; }
+    .filter-btn { background: rgba(5, 8, 17, 0.8); color: var(--text); border: 1px solid var(--border); padding: 5px 12px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; }
+    .filter-btn.active { background: var(--accent); color: #000; font-weight: bold; border-color: var(--accent); }
+
+    .table-wrapper { overflow-x: auto; flex-grow: 1; }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th, td { padding: 10px 8px; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+    th { color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; }
+    
+    .rank { font-weight: bold; width: 35px; text-align: center; }
+    .rank-1 { color: #ffd700; font-size: 1.2rem; }
+    .rank-2 { color: #c0c0c0; font-size: 1.1rem; }
+    .rank-3 { color: #cd7f32; font-size: 1.1rem; }
+    
+    .score-val { font-weight: bold; color: var(--accent); }
+    .ratio-val { font-weight: bold; color: #38bdf8; }
+    .badge { padding: 2px 6px; border-radius: 10px; font-size: 0.7rem; font-weight: bold; }
+    .badge-H { background: #1e3a8a; color: #93c5fd; }
+    .badge-F { background: #831843; color: #fbcfe8; }
+
+    .btn-delete { background: none; border: none; color: #ef4444; cursor: pointer; font-size: 1rem; width: auto; padding: 0; }
+    .reset-btn { background: #dc2626; color: white; margin-top: 15px; font-size: 0.8rem; padding: 8px; }
+  </style>
+</head>
+<body>
+
+  <!-- Image en arrière-plan animée -->
+  <div class="hero-bg"></div>
+
+  <!-- Overlay GIF Predator lors de la validation -->
+  <div id="gif-overlay">
+    <div class="gif-box">
+      <img id="celebration-gif" src="gifpredator.gif" alt="Score Enregistré !">
+      <h3>SCORE VALIDÉ ! 🤝🔥</h3>
+    </div>
+  </div>
+
+  <!-- Application Web -->
+  <div class="app-container">
+    <header>
+      <h1>✊ C21 GRIP STRENGTH</h1>
+      <p>Concours de Force de Préhension</p>
+    </header>
+
+    <div class="main-layout">
+      
+      <!-- CENTRE : Formulaire d'ajout -->
+      <div class="card">
+        <h2>Saisir un score</h2>
+        <form id="score-form">
+          <div class="form-group">
+            <label for="name">Nom / Pseudo</label>
+            <input type="text" id="name" required placeholder="Ex: Marc">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="category">Catégorie</label>
+              <select id="category">
+                <option value="H">Homme</option>
+                <option value="F">Femme</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="service">Service</label>
+              <input type="text" id="service" required placeholder="Ex: Ventes">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="weight">Poids (kg)</label>
+              <input type="number" id="weight" step="0.1" min="30" max="250" required placeholder="Ex: 75">
+            </div>
+            <div class="form-group">
+              <label for="score">Grip (kg)</label>
+              <input type="number" id="score" step="0.1" min="0" max="200" required placeholder="Ex: 58.5">
+            </div>
+          </div>
+
+          <button type="submit">Ajouter au classement</button>
+        </form>
+        <button class="reset-btn" id="reset-btn">Réinitialiser tout le concours</button>
+      </div>
+
+      <!-- DROITE : Classement -->
+      <div class="card card-leaderboard">
+        <div class="controls">
+          <h2>Classement</h2>
+          <div>
+            <button class="filter-btn active" data-filter="ALL">Tous</button>
+            <button class="filter-btn" data-filter="H">Hommes</button>
+            <button class="filter-btn" data-filter="F">Femmes</button>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th style="text-align: center;">#</th>
+                <th>Nom</th>
+                <th>Service</th>
+                <th>Cat.</th>
+                <th>Poids</th>
+                <th>Grip</th>
+                <th>Ratio (Grip/Poids)</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="leaderboard-body">
+              <!-- Données insérées en JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    let participants = JSON.parse(localStorage.getItem('grip_participants_v2')) || [];
+    let currentFilter = 'ALL';
+
+    const form = document.getElementById('score-form');
+    const leaderboardBody = document.getElementById('leaderboard-body');
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const gifOverlay = document.getElementById('gif-overlay');
+    const celebrationGif = document.getElementById('celebration-gif');
+
+    function saveData() {
+      localStorage.setItem('grip_participants_v2', JSON.stringify(participants));
+    }
+
+    function renderLeaderboard() {
+      leaderboardBody.innerHTML = '';
+      let filtered = participants.filter(p => currentFilter === 'ALL' || p.category === currentFilter);
+      
+      filtered.sort((a, b) => b.score - a.score);
+
+      if (filtered.length === 0) {
+        leaderboardBody.innerHTML = `<tr><td colspan="8" style="text-align:center; color: var(--text-muted); padding: 30px;">Aucun participant pour le moment.</td></tr>`;
+        return;
+      }
+
+      filtered.forEach((p, index) => {
+        const rank = index + 1;
+        let rankClass = '';
+        let rankSymbol = rank;
+
+        if (rank === 1) { rankClass = 'rank-1'; rankSymbol = '🥇'; }
+        else if (rank === 2) { rankClass = 'rank-2'; rankSymbol = '🥈'; }
+        else if (rank === 3) { rankClass = 'rank-3'; rankSymbol = '🥉'; }
+
+        const ratio = (p.weight && p.weight > 0) ? (p.score / p.weight).toFixed(2) : '-';
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="rank ${rankClass}">${rankSymbol}</td>
+          <td><strong>${escapeHtml(p.name)}</strong></td>
+          <td>${escapeHtml(p.service || '-')}</td>
+          <td><span class="badge badge-${p.category}">${p.category === 'H' ? 'H' : 'F'}</span></td>
+          <td>${p.weight ? p.weight.toFixed(1) + ' kg' : '-'}</td>
+          <td class="score-val">${p.score.toFixed(1)} kg</td>
+          <td class="ratio-val">${ratio !== '-' ? ratio + ' x' : '-'}</td>
+          <td><button class="btn-delete" onclick="deleteParticipant('${p.id}')" title="Supprimer">✕</button></td>
+        `;
+        leaderboardBody.appendChild(tr);
+      });
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.innerText = text;
+      return div.innerHTML;
+    }
+
+    // Afficher le GIF animé
+    function triggerGifAnimation() {
+      // Astuce pour rejouer le GIF depuis le début à chaque fois
+      const originalSrc = celebrationGif.src;
+      celebrationGif.src = '';
+      celebrationGif.src = originalSrc;
+
+      gifOverlay.classList.add('active');
+      
+      // Masquer après 2.8 secondes (durée de l'animation de poignée de main)
+      setTimeout(() => {
+        gifOverlay.classList.remove('active');
+      }, 2800);
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const service = document.getElementById('service').value.trim();
+      const category = document.getElementById('category').value;
+      const weight = parseFloat(document.getElementById('weight').value);
+      const score = parseFloat(document.getElementById('score').value);
+
+      if (name && !isNaN(score) && !isNaN(weight)) {
+        participants.push({ 
+          id: Date.now().toString(), 
+          name, 
+          service,
+          category, 
+          weight,
+          score 
+        });
+        saveData();
+        renderLeaderboard();
+        form.reset();
+        document.getElementById('name').focus();
+
+        triggerGifAnimation();
+      }
+    });
+
+    window.deleteParticipant = function(id) {
+      if (confirm('Supprimer ce participant ?')) {
+        participants = participants.filter(p => p.id !== id);
+        saveData();
+        renderLeaderboard();
+      }
+    };
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+        renderLeaderboard();
+      });
+    });
+
+    resetBtn.addEventListener('click', () => {
+      if (confirm('Attention : cela va effacer TOUS les scores du concours. Continuer ?')) {
+        participants = [];
+        saveData();
+        renderLeaderboard();
+      }
+    });
+
+    renderLeaderboard();
+  </script>
+</body>
+</html>
