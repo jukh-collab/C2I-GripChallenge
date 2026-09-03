@@ -218,7 +218,7 @@
       cursor: pointer; 
     }
 
-    /* Bouton Export CSV réintégré sous le formulaire */
+    /* Bouton Export CSV */
     .export-btn {
       width: 100%;
       background: transparent;
@@ -261,6 +261,7 @@
     .badge-hulk { background: #15803d; color: #bbf7d0; border: 1px solid #22c55e; }
     .badge-bruce { background: #b45309; color: #fef08a; border: 1px solid #eab308; }
     .badge-hook { background: #475569; color: #cbd5e1; border: 1px solid #94a3b8; }
+    .badge-king { background: #7c2d12; color: #fef08a; border: 1px solid #f59e0b; margin-left: 6px; }
 
     .btn-delete { background: none; border: none; color: #ef4444; cursor: pointer; font-size: 1rem; width: auto; padding: 0; }
   </style>
@@ -516,10 +517,16 @@
 
       statsArray.sort((a, b) => b.avg - a.avg);
 
-      statsArray.forEach(s => {
+      const bestServiceAvg = statsArray.length > 0 ? statsArray[0].avg : 0;
+
+      statsArray.forEach((s, idx) => {
         const tr = document.createElement('tr');
+        
+        // Ajout du badge King pour le premier service s'il a au moins un participant
+        let kingBadge = (idx === 0 && bestServiceAvg > 0) ? `<span class="badge badge-king" title="Meilleur service en moyenne">👑 King</span>` : '';
+
         tr.innerHTML = `
-          <td><strong>${escapeHtml(s.name)}</strong></td>
+          <td><strong>${escapeHtml(s.name)}</strong>${kingBadge}</td>
           <td class="score-val">${s.avg.toFixed(1)} kg</td>
           <td>${s.count} <span style="color:var(--text-muted); font-size:0.8rem;">(${s.h}H / ${s.f}F)</span></td>
         `;
