@@ -253,6 +253,7 @@
     
     .score-val { font-weight: bold; color: var(--accent); }
     .ratio-val { font-weight: bold; color: #38bdf8; }
+    .weight-val { color: var(--text-muted); }
     .badge { padding: 2px 6px; border-radius: 10px; font-size: 0.7rem; font-weight: bold; display: inline-block; margin-right: 2px; }
     .badge-H { background: #1e3a8a; color: #93c5fd; }
     .badge-F { background: #831843; color: #fbcfe8; }
@@ -371,8 +372,8 @@
                 <th>Nom</th>
                 <th>Groupe</th>
                 <th>Cat.</th>
-                <th>Poids</th>
                 <th>Grip</th>
+                <th>Poids de corps</th>
                 <th>Ratio</th>
                 <th>Badges</th>
                 <th></th>
@@ -474,8 +475,8 @@
             <td><strong>${escapeHtml(p.name)}</strong></td>
             <td>${escapeHtml(p.service || '-')}</td>
             <td><span class="badge badge-${p.category}">${p.category === 'H' ? 'H' : 'F'}</span></td>
-            <td>${p.weight ? p.weight.toFixed(1) + ' kg' : '-'}</td>
             <td class="score-val">${p.score.toFixed(1)} kg</td>
+            <td class="weight-val">${p.weight ? p.weight.toFixed(1) + ' kg' : '-'}</td>
             <td class="ratio-val">${ratio !== '-' ? ratio + ' x' : '-'}</td>
             <td>${badgeHtml || '-'}</td>
             <td><button class="btn-delete" onclick="deleteParticipant('${p.id}')" title="Supprimer">✕</button></td>
